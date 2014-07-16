@@ -31,6 +31,9 @@ node index.js
 ```
 
 ### TODO
+more documentation
+
+
 docker + fig deployement
 
 
