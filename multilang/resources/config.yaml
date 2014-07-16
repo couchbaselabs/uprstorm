@@ -1,0 +1,11 @@
+spout: uprspouttwitterstream
+
+couchbase:
+    ip: 127.0.0.1
+    mc_port: 11210 
+    vbuckets: 64
+
+ui:
+  enabled: True
+  ip: 127.0.0.1
+  port: 3000

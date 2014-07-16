@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+  <head>
+    <title>upr#storm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+   
+   <table class="table table-striped table-condensed">
+     <caption>Ranked Results</caption>
+      <thead>
+        <tr>
+          <th>rank</th>
+          <th>topic</th>
+          <th>count</th>
+          <th>tweet</th>
+        </tr>
+      </thead>
+      <tbody id="rankings">
+        <tr id="rank0" class="none">
+          <td>1</td>
+          <td id="rank0-topic"></td>
+          <td id="rank0-count"></td>
+          <td id="rank0-text"></td>
+        </tr>
+        <tr id="rank1" class="none" >
+          <td>2</td>
+          <td id="rank1-topic"></td>
+          <td id="rank1-count"></td>
+          <td id="rank1-text"></td>
+        </tr>
+        <tr id="rank2" class="none">
+          <td>3</td>
+          <td id="rank2-topic"></td>
+          <td id="rank2-count"></td>
+          <td id="rank2-text"></td>
+        </tr>
+        <tr id="rank3" class="none">
+          <td>4</td>
+          <td id="rank3-topic"></td>
+          <td id="rank3-count"></td>
+          <td id="rank3-text"></td>
+        </tr>
+        <tr id="rank4" class="none">
+          <td>5</td>
+          <td id="rank4-topic"></td>
+          <td id="rank4-count"></td>
+          <td id="rank4-text"></td>
+        </tr>
+      </tbody>
+   </table>
+
+    <hr/>
+    <br/>
+    <br/>
+    <hr/>
+    <br/>
+    <br/>
+    
+
+    <div style="width:350px">
+       <table class="table table-striped table-condensed">
+         <caption>Stats</caption>
+          <thead>
+            <tr>
+              <th>vbucket</th>
+              <th>read seqno</th>
+              <th>high seqno</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="vb0">
+              <td>0</td>
+              <td id="vb0-last">0</td>
+              <td id="vb0-high">0</td>
+            </tr>
+            <tr id="vb16">
+              <td>16</td>
+              <td id="vb16-last">0</td>
+              <td id="vb16-high">0</td>
+            </tr>
+            <tr id="vb32">
+              <td>32</td>
+              <td id="vb32-last">0</td>
+              <td id="vb32-high">0</td>
+            </tr>
+            <tr id="vb48">
+              <td>48</td>
+              <td id="vb48-last">0</td>
+              <td id="vb48-high">0</td>
+            </tr>
+          </tbody>
+       </table>
+    </div>
+   <script src="/socket.io/socket.io.js"></script>
+   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+   <script>
+     var socket = io();
+
+
+
+      socket.on('vbucket', function(msg){
+        var vb = msg['vb'];
+        var last = msg['last'];
+        var high = msg['high'];
+        $('#vb'+vb+'-last').text(last);
+        $('#vb'+vb+'-high').text(high);
+      });
+      socket.on('message', function(msg){
+        var rank = msg['rank'];
+        var topic = msg['topic'];
+        var count = msg['count'];
+        var txt = msg['txt'];
+        var cls = msg['cls'];
+        $('#rank'+rank+'-topic').text(topic);
+        $('#rank'+rank+'-count').text(count);
+        $('#rank'+rank+'-text').text(txt);
+
+        if (cls == 'none'){
+            $('#rank'+rank).removeClass('success');
+            $('#rank'+rank).removeClass('error');
+        } else{
+            $('#rank'+rank).addClass(cls);
+        }
+        // purge topics
+        var activeRankings = [];
+        $("#rankings > tr").each(function( i, row ) {
+             var topic = $(row).children("#rank"+i+"-topic").text();
+             activeRankings.push(topic);
+        });
+        socket.emit('rankings', activeRankings);
+
+      });
+   </script>
+  </body>
+</html>
