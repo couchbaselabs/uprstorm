@@ -24,10 +24,12 @@ cd data
 python loader.py 
 ```
 
-UI is available for viewing stats and results.  Requires node and couchnode (TODO: update package.json)
+UI is available for viewing stats and results. 
 ```
+# Requires node and couchnode (TODO: update package.json with deps)
 cd ui
 node index.js 
+http://localhost:3000
 ```
 
 ### TODO
