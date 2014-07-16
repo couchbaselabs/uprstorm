@@ -1,11 +1,11 @@
 uprstorm
 ========
 
-Realtime processing of UPR streams using apache storm.
+Realtime processing of UPR streams using apache storm using a [distributed rolling count algorithm](http://www.michael-noll.com/blog/2013/01/18/implementing-real-time-trending-topics-in-storm/) to detect trending topics.
 
 ![alt text](https://s3.amazonaws.com/tmcafeecouchbase/upr-storm+(1).jpg)
 
-[based on rolling count algorithm](http://www.michael-noll.com/blog/2013/01/18/implementing-real-time-trending-topics-in-storm/)
+
 
 
 ### Configure
