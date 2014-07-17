@@ -6,6 +6,6 @@ couchbase:
     vbuckets: 64
 
 ui:
-  enabled: True
+  enabled: False
   ip: 127.0.0.1
   port: 3000
