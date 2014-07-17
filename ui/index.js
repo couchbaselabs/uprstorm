@@ -2,12 +2,22 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var couchbase = require('couchbase');
+var fs = require("fs");
+var path = require("path");
+var yaml = require('js-yaml');
+
+var configFile = path.resolve(__dirname,
+                              path.join('..','multilang','resources','config.yaml'));
+var config = yaml.safeLoad(fs.readFileSync(configFile, 'utf8'));
+var ip = config['couchbase']['ip'];
+var port = config['couchbase']['port'];
+
 var topics = {};
 
 var db = new couchbase.Connection({
   bucket:"default",
   password:"",
-  host:"localhost:8091"
+  host: ip+":"+port
 });
 
 app.get('/', function(req, res){
