@@ -6,14 +6,18 @@ Realtime processing of UPR streams with apache storm to detect trending topics u
 ![alt text](https://s3.amazonaws.com/tmcafeecouchbase/upr-storm+(1).jpg)
 
 
-
+### Building on OSX
+```
+brew install maven
+pip install pyaml
+pip install requests
+```
 
 ### Configure
 Default config should be fine, if not check ``` multilang/resources/config.yaml ```
 
-
-### Usage
-easiest way to start topolgy is with maven
+### Running
+Easiest way to start topolgy is with maven
 ```bash
 mvn compile exec:java -Dstorm.topology=storm.starter.UPRStormTopology
 ```
@@ -24,6 +28,7 @@ cd data
 python loader.py 
 ```
 
+### Monitor
 UI is available for viewing stats and results. 
 ```
 # Requires node and couchnode (TODO: update package.json with deps)
