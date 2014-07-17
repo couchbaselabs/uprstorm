@@ -1,6 +1,11 @@
 {
-    "name": "socket-chat-example",
+    "name": "upr-strom",
     "version": "0.0.1",
     "description": "uprstorm ui",
-    "dependencies": {}
+    "dependencies": {
+        "couchbase": "*",
+        "express": "*",
+        "socket.io": "*",
+        "js-yaml" : "*"
+    }
 }

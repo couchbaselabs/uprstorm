@@ -29,9 +29,12 @@ python data/loader.py
 
 ### Monitor
 UI is available for viewing stats and results. 
+
 ```
-# Requires node and couchnode (TODO: update package.json with deps)
+brew install node
+
 cd ui
+npm install
 node index.js 
 http://localhost:3000
 ```
