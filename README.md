@@ -24,8 +24,7 @@ mvn compile exec:java -Dstorm.topology=storm.starter.UPRStormTopology
 
 While topology is running, load some data
 ```
-cd data
-python loader.py 
+python data/loader.py 
 ```
 
 ### Monitor
