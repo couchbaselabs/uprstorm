@@ -2,6 +2,7 @@ import sys
 import json
 import yaml
 import storm
+from rest import Rest
 from streamreader import StreamReader
 
 CONFIG = yaml.load(file('config.yaml', 'rb'))
@@ -24,13 +25,17 @@ class UPRSpoutStream(storm.Spout):
 
         cbconf = CONFIG['couchbase']
         ip = cbconf['ip']
-        port = int(cbconf['mc_port'])
+        port = int(cbconf['port'])
+        username = cbconf['username']
+        password = cbconf['password']
         vbuckets = cbconf['vbuckets']
+        rest = Rest(ip, port, username, password)
         start, end = computeVBRange(vbuckets)
-        self.reader = StreamReader(ip, port, start, end)
+        self.reader = StreamReader(rest, start, end)
 
     def nextTuple(self):
         vb, msg = self.reader.response().next()
+
         if msg and msg['opcode'] == 87:
             tweet = json.loads(msg['value'])
             tags = tweet['hashtags']

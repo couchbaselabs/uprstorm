@@ -5,6 +5,8 @@ couchbase:
     port: 8091
     mc_port: 11210 
     vbuckets: 64
+    username: Administrator
+    password: password
 
 ui:
   enabled: False
