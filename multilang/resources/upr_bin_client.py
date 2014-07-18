@@ -44,6 +44,7 @@ class UprClient(MemcachedClient):
         return self._handle_op(op)
 
     def close(self):
+        self.quit()
         super(UprClient, self).close()
         self.dead = True
 
@@ -223,6 +224,9 @@ class UprClient(MemcachedClient):
                     elif opcode == CMD_STREAM_REQ:
                         # stream_req ops received during add_stream request
                         self.ack_stream_req(opaque)
+
+                    if opcode == CMD_QUIT:
+                        break
 
                 except Exception as ex:
                     pass 

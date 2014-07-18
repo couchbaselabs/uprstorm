@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from upr_bin_client import UprClient
 from mc_bin_client import MemcachedClient
@@ -13,8 +14,22 @@ class Rest:
         path = os.sep.join(["pools","default","buckets","default"])
         self.url = api + path
         self.__vbServerMap = self.vbServerMap()
+        self.clientStatMap = {}
         self.uprClientMap = {}
         self.mcdClientMap = {}
+
+    def updateVbMap(self):
+        self.__vbServerMap = self.vbServerMap()
+        for key in self.uprClientMap:
+            client = self.uprClientMap[key]
+            client.close()
+        for key in self.mcdClientMap:
+            client = self.mcdClientMap[key]
+            client.close()
+
+        self.uprClientMap = {}
+        self.mcdClientMap = {}
+        self.clientStatMap = {}
 
     def vbServerMap(self):
         r = requests.get(self.url, auth=(self.username, self.password))
@@ -55,3 +70,17 @@ class Rest:
             self.mcdClientMap[server] = client
 
         return client
+
+    def vbSeqnoUuid(self, vb):
+        server = self.serverVb(vb)
+        if server in self.clientStatMap:
+            stats = self.clientStatMap[server]
+        else:
+            client = self.vbMcdClient(vb)
+            stats = client.stats('vbucket-seqno')
+            self.clientStatMap[server] = stats
+
+        seqno = int(stats['vb_%s:high_seqno' % vb])
+        uuid = int(stats['vb_%s:uuid' % vb])
+
+        return seqno, uuid

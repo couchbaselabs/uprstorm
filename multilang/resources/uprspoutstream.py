@@ -34,12 +34,16 @@ class UPRSpoutStream(storm.Spout):
         self.reader = StreamReader(rest, start, end)
 
     def nextTuple(self):
-        vb, msg = self.reader.response().next()
 
-        if msg and msg['opcode'] == 87:
-            tweet = json.loads(msg['value'])
-            tags = tweet['hashtags']
-            id = tweet['id']
-            storm.emit([tags[0], id, vb])
+        try:
+            vb, msg = self.reader.response().next()
+            if msg and msg['opcode'] == 87:
+                tweet = json.loads(msg['value'])
+                tags = tweet['hashtags']
+                id = tweet['id']
+                storm.emit([tags[0], id, vb])
+        except StopIteration:
+            storm.log("resetting vbucket map")
+            self.reader.reset()
 
 UPRSpoutStream().run()
