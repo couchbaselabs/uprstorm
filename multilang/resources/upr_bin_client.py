@@ -275,7 +275,7 @@ class UprStream(object):
         if self.has_response():
 
             try:
-                msg = self.op.queue.get(timeout = timeout)
+                msg = self.op.queue.get_nowait()
             except Queue.Empty:
                 return None
 
@@ -294,6 +294,12 @@ class UprStream(object):
                 self._ended = True
 
         return msg
+
+
+    def response_gen(self):
+        while self.has_response():
+            response = self.next_response()
+            yield response
 
     def run(self, end=None):
         """ return the responses from the stream up to seqno = end

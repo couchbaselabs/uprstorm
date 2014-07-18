@@ -1,10 +1,10 @@
 import sys
+import json
 import yaml
-import Queue
 import storm
 from streamreader import StreamReader
-import threading
 
+CONFIG = yaml.load(file('config.yaml', 'rb'))
 
 def computeVBRange(vbuckets):
     start = 0
@@ -22,27 +22,19 @@ class UPRSpoutStream(storm.Spout):
 
     def initialize(self, conf, context):
 
-        self.MSG_Q = Queue.Queue()
-
-        self.config = yaml.load(file('config.yaml', 'rb'))
-        cbconf = self.config['couchbase']
+        cbconf = CONFIG['couchbase']
         ip = cbconf['ip']
         port = int(cbconf['mc_port'])
-        self.vbuckets = cbconf['vbuckets']
-            
-        start, end = computeVBRange(self.vbuckets)        
-        for vb in range(start, end):
-            streamReader = StreamReader(ip, port, vb, self.MSG_Q)
-            streamReader.start()
-
+        vbuckets = cbconf['vbuckets']
+        start, end = computeVBRange(vbuckets)
+        self.reader = StreamReader(ip, port, start, end)
 
     def nextTuple(self):
-        msg = self.MSG_Q.get()
-        if 'err' in msg:
-            raise Exception(msg)
-        self.emitTuple(msg)
+        vb, msg = self.reader.response().next()
+        if msg and msg['opcode'] == 87:
+            tweet = json.loads(msg['value'])
+            tags = tweet['hashtags']
+            id = tweet['id']
+            storm.emit([tags[0], id, vb])
 
-    def emitTuple(self, msg):
-        pass # override with emitter specific to use-case
-
-
+UPRSpoutStream().run()
