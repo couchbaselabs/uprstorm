@@ -41,6 +41,7 @@ class PostRankingsBolt(storm.BasicBolt):
     def postRankings(self, topic, rank, count, id):
         uiconf = self.config['ui']
         api = "http://{0}:{1}/storm".format(uiconf['ip'], uiconf['port'])
+        topic = topic.encode('utf-8')
         path =  "/{0}/{1}/{2}/{3}".format(topic, rank, count, id) 
         url = api+path
         r = requests.get(url)
